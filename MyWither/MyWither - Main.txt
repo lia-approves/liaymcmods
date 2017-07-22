@@ -1,0 +1,7 @@
+//Paste this code into Main.java in the load section, under the code for registering your other entities.
+
+    //  REGISTER YOUR ENTITY WITHER
+        EntityRegistry.registerGlobalEntityID(MyEntityWither.class, "Wither Test", EntityRegistry.findGlobalUniqueEntityId());
+        registerEntityEgg(MyEntityWither.class, (new Color(0, 255, 0)).getRGB(), (new Color(255, 0, 0)).getRGB());
+        RenderingRegistry.registerEntityRenderingHandler(MyEntityWither.class, new MyRenderWither());
+        ModLoader.addLocalization("entity.Wither Test.name", "Wither Test");

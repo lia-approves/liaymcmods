@@ -1,0 +1,54 @@
+//Name your image MyHorse_White.png and save it in assets > mymod.textures > entity.
+//This will give your horse armor called "MyHorse_Armor.png" only when you ride it.
+package mymod.entity.horse;
+
+import java.util.Map;
+
+import com.google.common.collect.Maps;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelHorse;
+import net.minecraft.client.renderer.entity.RenderHorse;
+import net.minecraft.client.renderer.texture.LayeredTexture;
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.util.ResourceLocation;
+
+public class MyRenderHorse extends RenderHorse{
+
+	private static final Map field_110852_a = Maps.newHashMap();
+    private static final String whiteHorseTextures = "mymod:textures/entity/MyHorse_White.png";
+    private static final ResourceLocation whiteHorseTexturesRL = new ResourceLocation(whiteHorseTextures);
+    private static final String myHorseArmorTexture = "mymod:textures/entity/MyHorse_Armor.png";
+    private static final String[] horseTextures = new String[] {whiteHorseTextures, myHorseArmorTexture, myHorseArmorTexture, myHorseArmorTexture};
+
+    public MyRenderHorse() {
+		super(new ModelHorse(), 2);
+	}
+
+    @Override
+	protected ResourceLocation func_110849_a(EntityHorse par1EntityHorse)
+    {
+        horseTextures[0] = whiteHorseTextures;
+        if (par1EntityHorse.riddenByEntity == null){
+            return whiteHorseTexturesRL;
+        }else{
+            return this.func_110848_b(par1EntityHorse);
+        }
+    }
+
+    private ResourceLocation func_110848_b(EntityHorse par1EntityHorse)
+    {
+        String s = par1EntityHorse.getHorseTexture();
+        ResourceLocation resourcelocation = (ResourceLocation)field_110852_a.get(s);
+
+        if (resourcelocation == null)
+        {
+            resourcelocation = new ResourceLocation(s);
+            Minecraft.getMinecraft().getTextureManager().loadTexture(resourcelocation, new LayeredTexture(horseTextures));
+            field_110852_a.put(s, resourcelocation);
+        }
+
+        return resourcelocation;
+    }
+}

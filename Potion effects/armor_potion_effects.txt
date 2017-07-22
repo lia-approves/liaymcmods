@@ -1,0 +1,34 @@
+//UPDATED, WORKS NOW. The problem earlier was that potion effects went away if there was no armor in your inventory, even if you were wearing armor
+//UPDATED A SECOND TIME: Now the armor potion effects will still work if you die and respawn
+//This code gives you potion effects when you put on one or more pieces of your MyArmor
+//If you want potion effects only when all four armor pieces are equipped, change each of the 3 ||s in the code below to &&s
+//To update, delete the previous onUpdate method in MyArmor.java and paste in the following code:
+
+    private boolean armorOn = false;    
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
+    	super.onUpdate(par1ItemStack, par2World, par3Entity, par4, par5);
+    	armorOn = false;
+	EntityPlayer entityplayer;
+    	if(par3Entity instanceof EntityPlayer){
+    		entityplayer = (EntityPlayer) par3Entity;
+    	}else{
+    		return;
+    	}
+        if((entityplayer.getCurrentItemOrArmor(4) != null && entityplayer.getCurrentItemOrArmor(4).itemID == Main.MyHelmet_1.itemID)
+        ||(entityplayer.getCurrentItemOrArmor(3) != null && entityplayer.getCurrentItemOrArmor(3).itemID == Main.MyChest_1.itemID)
+        ||(entityplayer.getCurrentItemOrArmor(2) != null && entityplayer.getCurrentItemOrArmor(2).itemID == Main.MyLeggings_1.itemID)
+        ||(entityplayer.getCurrentItemOrArmor(1) != null && entityplayer.getCurrentItemOrArmor(1).itemID == Main.MyBoots_1.itemID)){
+        	if(!armorOn){
+        		armorOn = true;
+        		entityplayer.addPotionEffect(new PotionEffect(Potion.invisibility.id, 20000000));	//Potion.[potioneffect].id, duration
+        		entityplayer.addPotionEffect(new PotionEffect(Potion.jump.id, 20000000, 5));	//Potion.[potioneffect].id, duration, multiplier
+        		//Note: 20 Minecraft ticks is 1 second
+        	}
+        }else{
+        	armorOn = false;
+        	entityplayer.removePotionEffect(Potion.invisibility.id);
+        	entityplayer.removePotionEffect(Potion.jump.id);
+        }
+    }

@@ -1,0 +1,11 @@
+package mymod.entity.dragon;
+
+import net.minecraft.client.model.ModelDragon;
+
+public class MyModelDragon extends ModelDragon{
+
+	public MyModelDragon(float par1) {
+		super(par1);
+	}
+
+}

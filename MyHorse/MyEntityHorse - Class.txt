@@ -1,0 +1,15 @@
+//Make a new package: mymod.entity.horse
+//In that package, make two classes, MyEntityHorse and MyRenderHorse.
+//If you'd like to override methods from EntityHorse, Open Declaration of EntityHorse.
+package mymod.entity.horse;
+
+import net.minecraft.entity.passive.EntityHorse;
+import net.minecraft.world.World;
+
+public class MyEntityHorse extends EntityHorse{
+
+	public MyEntityHorse(World par1World) {
+		super(par1World);
+	}
+
+}

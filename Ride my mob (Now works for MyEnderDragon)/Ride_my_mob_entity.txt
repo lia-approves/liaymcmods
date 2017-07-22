@@ -1,0 +1,33 @@
+//If there is an interact() method in your MyEntity___.java, paste section 1.
+//If there is no interact() method in your MyEntity.java, paste section 2.
+
+//SECTION 1
+//If there is an interact() method already, paste it right behind the first { of the interact() method.
+//If there is an error because there's 2 lines starting with ItemStack, delete the 2nd line starting with ItemStack.
+	ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+        if (itemstack == null ||
+        !(Item.itemsList[itemstack.itemID] instanceof ItemFood) &&
+        itemstack.itemID != Item.bone.itemID &&
+        (this.riddenByEntity == null || this.riddenByEntity == par1EntityPlayer))
+        {
+            par1EntityPlayer.mountEntity(this);
+        }
+//END OF SECTION 1
+
+//SECTION 2
+//Paste this before the final } of the entire MyEntity___.java
+    public boolean interact(EntityPlayer par1EntityPlayer)
+    {
+        ItemStack itemstack = par1EntityPlayer.inventory.getCurrentItem();
+        if (itemstack == null ||
+        !(Item.itemsList[itemstack.itemID] instanceof ItemFood) &&
+        itemstack.itemID != Item.bone.itemID &&
+        itemstack.itemID != Item.porkCooked.itemID &&
+        itemstack.itemID != Item.porkRaw.itemID &&
+        (this.riddenByEntity == null || this.riddenByEntity == par1EntityPlayer))
+        {
+            par1EntityPlayer.mountEntity(this);
+        }
+	return super.interact(par1EntityPlayer);
+    }
+//END OF SECTION 2

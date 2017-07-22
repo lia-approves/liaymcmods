@@ -1,0 +1,7 @@
+    //	DECLARE THE ENCHANTMENT
+        public static Enchantment myEnchantmentKnockback;
+
+    //	LOAD THE ENCHANTMENT.
+    //  Note: Go into net > minecraft > enchantment > Enchantment.java to see each enchantment's number
+	Enchantment.enchantmentsList[19] = null; //Removes item N in the enchantment list. For Knockback, N = 19
+        myEnchantmentKnockback = new MyEnchantmentKnockback(19, 5); // enchantment number, weight (how common the enchantment is)

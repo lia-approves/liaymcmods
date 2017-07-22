@@ -1,0 +1,9 @@
+	//Paste this into your MyFood.java class before the final } to add potion effects to your food when eaten
+	@Override
+	@SideOnly(Side.CLIENT)
+	protected void onFoodEaten(ItemStack par1ItemStack, World par2World, EntityPlayer par3EntityPlayer)
+	{
+		par3EntityPlayer.addPotionEffect(new PotionEffect(Potion.moveSpeed.id, 100, 10));	//Potion.[potioneffect].id, duration, multiplier
+		par3EntityPlayer.addPotionEffect(new PotionEffect(Potion.invisibility.id, 20));	//Potion.[potioneffect].id, duration
+        //Note: 20 Minecraft ticks is 1 second
+	}

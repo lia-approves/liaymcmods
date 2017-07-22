@@ -1,0 +1,5 @@
+    //  REGISTER YOUR ENTITY HORSE
+        EntityRegistry.registerGlobalEntityID(MyEntityHorse.class, "Horse Test", EntityRegistry.findGlobalUniqueEntityId());
+        registerEntityEgg(MyEntityHorse.class, (new Color(255, 102, 0)).getRGB(), (new Color(255, 102, 0)).getRGB());
+        RenderingRegistry.registerEntityRenderingHandler(MyEntityHorse.class, new MyRenderHorse());
+        ModLoader.addLocalization("entity.Horse Test.name", "Horse Test");

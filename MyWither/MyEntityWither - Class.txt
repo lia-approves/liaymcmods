@@ -1,0 +1,361 @@
+//Make a new package called mymod.entity.wither.
+//Then make a new class there called MyEntityWither.
+//Delete the code in that class and paste in this code.
+
+package mymod.entity.wither;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+import java.util.List;
+
+import net.minecraft.block.Block;
+import net.minecraft.command.IEntitySelector;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.IRangedAttackMob;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAIArrowAttack;
+import net.minecraft.entity.ai.EntityAIHurtByTarget;
+import net.minecraft.entity.ai.EntityAILookIdle;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.ai.EntityAISwimming;
+import net.minecraft.entity.ai.EntityAIWander;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.boss.IBossDisplayData;
+import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityWitherSkull;
+import net.minecraft.item.Item;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
+
+public class MyEntityWither extends EntityWither implements IBossDisplayData, IRangedAttackMob
+{
+    private float[] field_82220_d = new float[2];
+    private float[] field_82221_e = new float[2];
+    private float[] field_82217_f = new float[2];
+    private float[] field_82218_g = new float[2];
+    private int[] field_82223_h = new int[2];
+    private int[] field_82224_i = new int[2];
+    private int field_82222_j;
+
+    /** Selector used to determine the entities a wither boss should attack. */
+    private static final IEntitySelector attackEntitySelector = new EntityWitherAttackFilter();
+
+    public MyEntityWither(World par1World)
+    {
+        super(par1World);
+    }
+
+    protected void entityInit()
+    {
+        super.entityInit();
+    }
+
+    /**
+     * (abstract) Protected helper method to write subclass entity data to NBT.
+     */
+    public void writeEntityToNBT(NBTTagCompound par1NBTTagCompound)
+    {
+        super.writeEntityToNBT(par1NBTTagCompound);
+    }
+
+    /**
+     * (abstract) Protected helper method to read subclass entity data from NBT.
+     */
+    public void readEntityFromNBT(NBTTagCompound par1NBTTagCompound)
+    {
+        super.readEntityFromNBT(par1NBTTagCompound);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public float getShadowSize()
+    {
+        return this.height / 8.0F;
+    }
+
+    /**
+     * Returns the sound this mob makes while it's alive.
+     */
+    protected String getLivingSound()
+    {
+        return "mob.wither.idle";
+    }
+
+    /**
+     * Returns the sound this mob makes when it is hurt.
+     */
+    protected String getHurtSound()
+    {
+        return "mob.wither.hurt";
+    }
+
+    /**
+     * Returns the sound this mob makes on death.
+     */
+    protected String getDeathSound()
+    {
+        return "mob.wither.death";
+    }
+
+    /**
+     * Called frequently so the entity can update its state every tick as required. For example, zombies and skeletons
+     * use this to react to sunlight and start to burn.
+     */
+    public void onLivingUpdate()
+    {
+        super.onLivingUpdate();
+    }
+
+    protected void updateAITasks()
+    {
+        super.updateAITasks();
+    }
+
+    public void func_82206_m()
+    {
+        this.func_82215_s(220);
+        this.setHealth(this.getMaxHealth() / 3.0F);
+    }
+
+    /**
+     * Sets the Entity inside a web block.
+     */
+    public void setInWeb() {}
+
+    /**
+     * Returns the current armor value as determined by a call to InventoryPlayer.getTotalArmorValue
+     */
+    public int getTotalArmorValue()
+    {
+        return 4;
+    }
+
+    private double func_82214_u(int par1)
+    {
+        if (par1 <= 0)
+        {
+            return this.posX;
+        }
+        else
+        {
+            float f = (this.renderYawOffset + (float)(180 * (par1 - 1))) / 180.0F * (float)Math.PI;
+            float f1 = MathHelper.cos(f);
+            return this.posX + (double)f1 * 1.3D;
+        }
+    }
+
+    private double func_82208_v(int par1)
+    {
+        return par1 <= 0 ? this.posY + 3.0D : this.posY + 2.2D;
+    }
+
+    private double func_82213_w(int par1)
+    {
+        if (par1 <= 0)
+        {
+            return this.posZ;
+        }
+        else
+        {
+            float f = (this.renderYawOffset + (float)(180 * (par1 - 1))) / 180.0F * (float)Math.PI;
+            float f1 = MathHelper.sin(f);
+            return this.posZ + (double)f1 * 1.3D;
+        }
+    }
+
+    private float func_82204_b(float par1, float par2, float par3)
+    {
+        float f3 = MathHelper.wrapAngleTo180_float(par2 - par1);
+
+        if (f3 > par3)
+        {
+            f3 = par3;
+        }
+
+        if (f3 < -par3)
+        {
+            f3 = -par3;
+        }
+
+        return par1 + f3;
+    }
+
+    private void func_82216_a(int par1, EntityLivingBase par2EntityLivingBase)
+    {
+        this.func_82209_a(par1, par2EntityLivingBase.posX, par2EntityLivingBase.posY + (double)par2EntityLivingBase.getEyeHeight() * 0.5D, par2EntityLivingBase.posZ, par1 == 0 && this.rand.nextFloat() < 0.001F);
+    }
+
+    private void func_82209_a(int par1, double par2, double par4, double par6, boolean par8)
+    {
+        this.worldObj.playAuxSFXAtEntity((EntityPlayer)null, 1014, (int)this.posX, (int)this.posY, (int)this.posZ, 0);
+        double d3 = this.func_82214_u(par1);
+        double d4 = this.func_82208_v(par1);
+        double d5 = this.func_82213_w(par1);
+        double d6 = par2 - d3;
+        double d7 = par4 - d4;
+        double d8 = par6 - d5;
+        EntityWitherSkull entitywitherskull = new EntityWitherSkull(this.worldObj, this, d6, d7, d8);
+
+        if (par8)
+        {
+            entitywitherskull.setInvulnerable(true);
+        }
+
+        entitywitherskull.posY = d4;
+        entitywitherskull.posX = d3;
+        entitywitherskull.posZ = d5;
+        this.worldObj.spawnEntityInWorld(entitywitherskull);
+    }
+
+    /**
+     * Attack the specified entity using a ranged attack.
+     */
+    public void attackEntityWithRangedAttack(EntityLivingBase par1EntityLivingBase, float par2)
+    {
+        this.func_82216_a(0, par1EntityLivingBase);
+    }
+
+    /**
+     * Called when the entity is attacked.
+     */
+    public boolean attackEntityFrom(DamageSource par1DamageSource, float par2)
+    {
+        return super.attackEntityFrom(par1DamageSource, par2);
+    }
+
+    /**
+     * Drop 0-2 items of this living's type. @param par1 - Whether this entity has recently been hit by a player. @param
+     * par2 - Level of Looting used to kill this mob.
+     */
+    protected void dropFewItems(boolean par1, int par2)
+    {
+        this.dropItem(Item.netherStar.itemID, 1);
+    }
+
+    /**
+     * Makes the entity despawn if requirements are reached
+     */
+    protected void despawnEntity()
+    {
+        this.entityAge = 0;
+    }
+
+    @SideOnly(Side.CLIENT)
+    public int getBrightnessForRender(float par1)
+    {
+        return 15728880;
+    }
+
+    /**
+     * Returns true if other Entities should be prevented from moving through this Entity.
+     */
+    public boolean canBeCollidedWith()
+    {
+        return !this.isDead;
+    }
+
+    /**
+     * Called when the mob is falling. Calculates and applies fall damage.
+     */
+    protected void fall(float par1) {}
+
+    /**
+     * adds a PotionEffect to the entity
+     */
+    public void addPotionEffect(PotionEffect par1PotionEffect) {}
+
+    /**
+     * Returns true if the newer Entity AI code should be run
+     */
+    protected boolean isAIEnabled()
+    {
+        return true;
+    }
+
+    protected void applyEntityAttributes()
+    {
+        super.applyEntityAttributes();
+        this.getEntityAttribute(SharedMonsterAttributes.maxHealth).setAttribute(300.0D);
+        this.getEntityAttribute(SharedMonsterAttributes.movementSpeed).setAttribute(0.6000000238418579D);
+        this.getEntityAttribute(SharedMonsterAttributes.followRange).setAttribute(40.0D);
+    }
+
+    @SideOnly(Side.CLIENT)
+    public float func_82207_a(int par1)
+    {
+        return this.field_82221_e[par1];
+    }
+
+    @SideOnly(Side.CLIENT)
+    public float func_82210_r(int par1)
+    {
+        return this.field_82220_d[par1];
+    }
+
+    public int func_82212_n()
+    {
+        return this.dataWatcher.getWatchableObjectInt(20);
+    }
+
+    public void func_82215_s(int par1)
+    {
+        this.dataWatcher.updateObject(20, Integer.valueOf(par1));
+    }
+
+    /**
+     * Returns the target entity ID if present, or -1 if not @param par1 The target offset, should be from 0-2
+     */
+    public int getWatchedTargetId(int par1)
+    {
+        return this.dataWatcher.getWatchableObjectInt(17 + par1);
+    }
+
+    public void func_82211_c(int par1, int par2)
+    {
+        this.dataWatcher.updateObject(17 + par1, Integer.valueOf(par2));
+    }
+
+    /**
+     * Returns whether the wither is armored with its boss armor or not by checking whether its health is below half of
+     * its maximum.
+     */
+    public boolean isArmored()
+    {
+        return this.getHealth() <= this.getMaxHealth() / 2.0F;
+    }
+
+    /**
+     * Get this Entity's EnumCreatureAttribute
+     */
+    public EnumCreatureAttribute getCreatureAttribute()
+    {
+        return EnumCreatureAttribute.UNDEAD;
+    }
+
+    /**
+     * Called when a player mounts an entity. e.g. mounts a pig, mounts a boat.
+     */
+    public void mountEntity(Entity par1Entity)
+    {
+        this.ridingEntity = null;
+    }
+}
+final class EntityWitherAttackFilter implements IEntitySelector
+{
+    /**
+     * Return whether the specified entity is applicable to this filter.
+     */
+    public boolean isEntityApplicable(Entity par1Entity)
+    {
+        return par1Entity instanceof EntityLivingBase && ((EntityLivingBase)par1Entity).getCreatureAttribute() != EnumCreatureAttribute.UNDEAD;
+    }
+}
